@@ -21,11 +21,13 @@ MODULE_DESCRIPTION("Creates a read-only char device that says how many times you
 #define CDEV_NOT_USED  0,
 #define CDEV_EXCLUSIVE_OPEN 1,
 
+static char buffer[255];
+static int buffer_pointer;
 static int major;
 static atomic_t already_open = ATOMIC_INIT(CDEV_NOT_USED); /* Is device open? Used to prevent multiple access to device */
 static struct class *cls;
 
-static int device_open(struct inode *, struct file *){
+static int device_open(struct inode *device, struct file *instance){
   static int count;
   /*atomic_cmpxchg compares the value of already_open with CDEV_NOT_USED. If they are equal, 
   it sets already_open to CDEV_EXCLUSIVE_OPEN and returns the old value else if already open 
@@ -37,13 +39,23 @@ static int device_open(struct inode *, struct file *){
   return SUCCESS;
 }
  
-static int device_close(struct inode *, struct file *){
+static int device_close(struct inode *device, struct file *instance){
   atomic_set(&already_open, CDEV_NOT_USED);
   module_put(THIS_MODULE);
 }
 
-static ssize_t device_read(struct file *, char __user *, size_t, loff_t *);
-static ssize_t device_write(struct file *, const char __user *, size_t, loff_t *);
+static ssize_t device_read(struct file *File, char __user *user_buffer, size_t count, loff_t * offs){
+  int to_copy, not_copied, delta;
+  to_copy = min(count, buffer_pointer);
+  not_copied = copy_to_user(user_buffer, buffer, to_copy);
+  delta = to_copy - not_copied;
+  return delta;
+}
+  
+static ssize_t device_write(struct file *File, const char __user *user_buffer, size_t count, loff_t *offs){
+  pr_alert("Sorry, this operation is not supported.\n");
+  return -EINVAL;
+}
 
 static struct file_operations fops = {
   .open = driver_open,
