@@ -30,9 +30,21 @@ static ssize_t write_proc(struct file *File, const char __user *user_buffer, siz
 	return delta;
 }
 
+static int open_proc(struct inode *inode, struct file *File){
+  try_module_get(THIS_MODULE);
+  return 0;
+}
+
+static int close_proc(struct inode *inode, struct file *File){
+  module_put(THIS_MODULE);
+  return 0;
+}
+
 static struct proc_ops fops = {
   .proc_read = read_proc,
   .proc_write = write_proc,
+  .proc_open = open_proc,
+  .proc_close = close_proc
 };
 
 static int __init ModuleInit(void){
