@@ -12,11 +12,11 @@ static spinlock_t sl_dynamic;                         /*format for dynamic -> sp
 
 static void example_spinlock_static(void){
   unsigned long flags;
-  spin_lock_irqsave(&sl_static, flags);               /*Acquires the spinlock and disables local interrupts, saving the current interrupt state in flags.*/
+  spin_lock_irqsave(&sl_static, flags);               /*Acquires the spinlock and disables local interrupts to prevent deadlock scenarios where an interrupt handler could try to acquire the same lock, saving the current interrupt state in flags.*/
   pr_info("Locked static spinlock\n");
   spin_unlock_irqrestore(&sl_static, flags);          /*Releases the spinlock and restores the previous interrupt state from flags. */
   pr_info("Unlocked static spinlock\n");
-}
+}to prevent deadlock scenarios where an interrupt handler could try to acquire the same lock.
 
 static void example_spinlock_dynamic(void){
   unsigned long flags;
