@@ -21,7 +21,7 @@ DECLARE_TASKLET(my_tasklet,task_func,0)                            /*DECLARE_TAS
 
 static int __init tasklet_init(void){
   pr_info("tasklet example init\n");
-  tasklet_schedule(&my_tasklet);                                   /*format tasklet_schedule(&my_tasklet); */
+  tasklet_schedule(&my_tasklet);                                   /*format tasklet_schedule(&my_tasklet); Schedules the tasklet my_tasklet to be executed by calling tasklet_schedule(&my_tasklet).This means that task_func will be executed at some later point when the kernel decides to run the tasklet. */
   mdelay(200);
   pr_info("Example tasklet init continues...\n");
   return 0;
@@ -29,6 +29,7 @@ static int __init tasklet_init(void){
 
 static void __exit tasklet_exit(void){
   pr_info("tasklet example exit\n");
+  tasklet_kill(&my_tasklet);
 }
 
 module_init(tasklet_init);
