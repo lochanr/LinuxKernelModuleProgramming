@@ -1,5 +1,9 @@
 /* To add a task to the scheduler we can use a workqueue. The kernel then uses
  *the Completely Fair Scheduler (CFS) to execute work within the queue.
+ * Allocates a workqueue named "HELLOWORLD" with no CPU affinity (WQ_UNBOUND) and a concurrency limit of 1.
+ * Initializes a work item (work) with the handler function work_handler.
+ * Queues the work item to the allocated workqueue.
+ * When the work item is executed by the workqueue, the work_handler function runs and logs a message.
 */
 
 #include <linux/init.h>
